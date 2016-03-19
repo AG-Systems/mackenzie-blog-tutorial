@@ -1,4 +1,5 @@
 class CommentsController < ApplicationController
+  #before_action :correct_user, only: :destroy
     
     def create
        @post = Post.find(params[:post_id])
@@ -17,6 +18,16 @@ class CommentsController < ApplicationController
       @comment.destroy
       
       redirect_to post_path(@post)
+    end
+    
+    private
+    
+    def correct_user
+    @comment = current_user.comments.find_by(id: params[:id])
+      if @comment.nil?
+        flash[:alert] = "Not your comment!"
+        redirect_to :back
+      end
     end
     
 

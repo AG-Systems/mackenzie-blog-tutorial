@@ -1,6 +1,7 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-
+  before_action :correct_user,       only: :destroy
+  
     def index
       @post = Post.all.order('created_at DESC')
     end
@@ -10,7 +11,8 @@ class PostsController < ApplicationController
     end
     
     def create
-      @post = Post.new(post_params)
+      @user = current_user
+      @post = @user.posts.new(post_params)
       
       if @post.save
         redirect_to @post
@@ -38,7 +40,6 @@ class PostsController < ApplicationController
     end
     
     def destroy
-      @post = Post.find(params[:id])
       @post.destroy
       redirect_to root_path
     end
@@ -49,5 +50,11 @@ class PostsController < ApplicationController
         params.require(:post).permit(:title, :body)
       end
       
-
+      def correct_user
+        @post = current_user.posts.find_by(id: params[:id])
+        if @post.nil?
+          flash[:alert] = "Not your post!"
+          redirect_to root_path
+        end
+      end
 end
