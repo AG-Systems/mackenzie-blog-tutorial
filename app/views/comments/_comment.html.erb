@@ -6,10 +6,12 @@
 	</div>
 	
 	<p>
+		<% unless !user_signed_in? %>
 	<%= link_to "Delete", post_comment_path(comment.post, comment),
 				method: :delete,
 				class: 'button',
 				data: { confirm: "Are you sure?" }%>
+		<% end %>
 	</p>
 
 </div>
